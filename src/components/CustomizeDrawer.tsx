@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Sparkles, Check, RotateCcw, Copy, UserCheck, Terminal } from 'lucide-react';
 import { ProfileConfig } from '../types/portfolio';
@@ -18,6 +18,24 @@ export const CustomizeDrawer: React.FC<CustomizeDrawerProps> = ({
   onUpdateProfile,
 }) => {
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
+      lenis?.stop();
+      document.body.style.overflow = 'hidden';
+    } else {
+      const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
+      lenis?.start();
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
+      lenis?.start();
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -41,7 +59,10 @@ export const CustomizeDrawer: React.FC<CustomizeDrawerProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex justify-end">
+      <div 
+        className="fixed inset-0 z-50 flex justify-end"
+        data-lenis-prevent="true"
+      >
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -58,9 +79,10 @@ export const CustomizeDrawer: React.FC<CustomizeDrawerProps> = ({
           exit={{ x: '100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           className="relative w-full max-w-md bg-[#0B0F19] border-l border-white/10 shadow-2xl shadow-cyan-950/60 z-10 h-full flex flex-col justify-between"
+          data-lenis-prevent="true"
         >
           {/* Header */}
-          <div className="p-5 border-b border-white/10 flex items-center justify-between bg-slate-900">
+          <div className="p-5 border-b border-white/10 flex items-center justify-between bg-slate-900 shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950">
                 <Sparkles className="w-4 h-4" />
@@ -85,7 +107,10 @@ export const CustomizeDrawer: React.FC<CustomizeDrawerProps> = ({
           </div>
 
           {/* Form Fields */}
-          <div className="p-5 overflow-y-auto space-y-4 flex-1 text-xs text-slate-200">
+          <div 
+            className="p-5 overflow-y-auto space-y-4 flex-1 text-xs text-slate-200 overscroll-contain"
+            data-lenis-prevent="true"
+          >
             <div>
               <label htmlFor="custom-name" className="block font-bold text-slate-300 mb-1 font-mono">
                 Full Name / Developer Alias
@@ -109,45 +134,17 @@ export const CustomizeDrawer: React.FC<CustomizeDrawerProps> = ({
                 type="text"
                 value={profile.roleTitle}
                 onChange={(e) => handleChange('roleTitle', e.target.value)}
-                placeholder="Frontend Developer & Web Developer"
+                placeholder="e.g. Frontend Developer"
                 className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-400"
               />
             </div>
 
             <div>
-              <label htmlFor="custom-email" className="block font-bold text-slate-300 mb-1 font-mono">
-                Email Address
-              </label>
-              <input
-                id="custom-email"
-                type="email"
-                value={profile.email}
-                onChange={(e) => handleChange('email', e.target.value)}
-                placeholder="nagapravallika05@gmail.com"
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-400"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="custom-location" className="block font-bold text-slate-300 mb-1 font-mono">
-                Location
-              </label>
-              <input
-                id="custom-location"
-                type="text"
-                value={profile.location}
-                onChange={(e) => handleChange('location', e.target.value)}
-                placeholder="Open for Remote & Relocation"
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-400"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="custom-hero" className="block font-bold text-slate-300 mb-1 font-mono">
-                Hero Supporting Text
+              <label htmlFor="custom-subtext" className="block font-bold text-slate-300 mb-1 font-mono">
+                Hero Subtext / Elevator Pitch
               </label>
               <textarea
-                id="custom-hero"
+                id="custom-subtext"
                 rows={2}
                 value={profile.supportingText}
                 onChange={(e) => handleChange('supportingText', e.target.value)}
@@ -157,37 +154,73 @@ export const CustomizeDrawer: React.FC<CustomizeDrawerProps> = ({
 
             <div>
               <label htmlFor="custom-bio" className="block font-bold text-slate-300 mb-1 font-mono">
-                About / Bio Description
+                Detailed Biography
               </label>
               <textarea
                 id="custom-bio"
-                rows={3}
+                rows={4}
                 value={profile.bio}
                 onChange={(e) => handleChange('bio', e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-400 resize-none"
               />
             </div>
+
+            <div>
+              <label htmlFor="custom-email" className="block font-bold text-slate-300 mb-1 font-mono">
+                Contact Email
+              </label>
+              <input
+                id="custom-email"
+                type="email"
+                value={profile.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-400"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="custom-location" className="block font-bold text-slate-300 mb-1 font-mono">
+                Location &amp; Availability
+              </label>
+              <input
+                id="custom-location"
+                type="text"
+                value={profile.location}
+                onChange={(e) => handleChange('location', e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-400"
+              />
+            </div>
           </div>
 
-          {/* Footer Controls */}
-          <div className="p-4 border-t border-white/10 bg-slate-900 flex items-center justify-between gap-2">
+          {/* Footer Action Buttons */}
+          <div className="p-4 border-t border-white/10 bg-slate-900/80 flex items-center justify-between gap-2 shrink-0">
             <button
               type="button"
               onClick={handleReset}
-              className="px-3 py-2 text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 text-xs font-bold border border-white/10 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset Defaults</span>
+              <span>Reset</span>
             </button>
 
-            <button
-              type="button"
-              onClick={handleCopyConfig}
-              className="px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-cyan-500/20 cursor-pointer"
-            >
-              {copied ? <Check className="w-3.5 h-3.5 text-slate-950" /> : <Copy className="w-3.5 h-3.5 text-slate-950" />}
-              <span>{copied ? 'Copied' : 'Copy JSON'}</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleCopyConfig}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-200 text-xs font-bold border border-white/10 transition-colors cursor-pointer"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copied ? 'Copied' : 'Export'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 text-xs font-black shadow-md shadow-cyan-500/20 transition-all cursor-pointer"
+              >
+                Done
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>

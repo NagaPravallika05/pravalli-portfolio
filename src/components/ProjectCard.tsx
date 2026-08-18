@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { ExternalLink, Github, ArrowUpRight, Code2, Eye, Calendar, Sparkles } from 'lucide-react';
+import { ExternalLink, Github, ArrowUpRight, Eye, Calendar, Sparkles } from 'lucide-react';
 import { Project } from '../types/portfolio';
 import { ProjectPreview } from './ProjectPreview';
 
@@ -16,13 +16,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onOpenDetails
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(mouseY, [-120, 120], [8, -8]), {
-    stiffness: 200,
-    damping: 20,
+  const rotateX = useSpring(useTransform(mouseY, [-100, 100], [6, -6]), {
+    stiffness: 250,
+    damping: 25,
   });
-  const rotateY = useSpring(useTransform(mouseX, [-120, 120], [-8, 8]), {
-    stiffness: 200,
-    damping: 20,
+  const rotateY = useSpring(useTransform(mouseX, [-100, 100], [-6, 6]), {
+    stiffness: 250,
+    damping: 25,
   });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -45,6 +45,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onOpenDetails
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className="perspective-1000 select-none h-full"
+      data-cursor="project"
     >
       <motion.div
         style={{
@@ -52,22 +53,22 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onOpenDetails
           rotateY,
           transformStyle: 'preserve-3d',
         }}
-        className="bg-slate-900/80 hover:bg-slate-850 rounded-3xl border border-white/10 hover:border-cyan-400/50 transition-all duration-200 flex flex-col justify-between overflow-hidden group shadow-xl shadow-black/50 hover:shadow-2xl hover:shadow-cyan-500/15 h-full relative backdrop-blur-xl"
+        className="bg-slate-900/60 hover:bg-slate-900/90 rounded-3xl border border-white/10 hover:border-cyan-400/50 transition-colors duration-200 flex flex-col justify-between overflow-hidden group shadow-xl shadow-black/50 hover:shadow-2xl hover:shadow-cyan-500/15 h-full relative backdrop-blur-xl"
       >
         {/* Top specular reflection line */}
         <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent pointer-events-none z-10" />
 
         <div>
-          {/* Interactive UI Mockup Preview Component */}
+          {/* Interactive UI Mockup Preview */}
           <div className="relative group/view">
             <ProjectPreview type={project.previewType} title={project.title} />
 
-            {/* Quick Inspection Overlay Button on Hover */}
+            {/* Quick Inspection Overlay Button */}
             <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover/view:opacity-100 backdrop-blur-xs transition-opacity flex items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={() => onOpenDetails(project)}
-                className="px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 text-xs font-black rounded-xl flex items-center gap-1.5 shadow-lg shadow-cyan-500/30 transform -translate-y-2 group-hover/view:translate-y-0 transition-transform cursor-pointer"
+                className="px-4 py-2 bg-gradient-to-r from-cyan-400 to-indigo-500 hover:from-cyan-300 hover:to-indigo-400 text-slate-950 text-xs font-black rounded-xl flex items-center gap-1.5 shadow-lg shadow-cyan-500/30 transform -translate-y-2 group-hover/view:translate-y-0 transition-transform cursor-pointer"
               >
                 <Eye className="w-3.5 h-3.5" />
                 <span>Deep Inspection</span>
@@ -89,7 +90,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onOpenDetails
               )}
             </div>
 
-            <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors mb-2">
+            <h3 className="text-lg font-heading font-bold text-white group-hover:text-cyan-300 transition-colors mb-2">
               {project.title}
             </h3>
 
@@ -97,12 +98,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onOpenDetails
               {project.description}
             </p>
 
-            {/* Tech Stack Pills with 3D Depth */}
+            {/* Tech Stack Pills */}
             <div className="flex flex-wrap gap-1.5 mb-4">
               {project.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2.5 py-1 rounded-lg bg-slate-950/90 border border-white/10 text-xs font-mono font-medium text-slate-300 shadow-2xs hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-slate-950/90 border border-white/5 text-xs font-mono font-medium text-slate-300 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
                 >
                   {tag}
                 </span>
@@ -118,7 +119,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onOpenDetails
             onClick={() => onOpenDetails(project)}
             className="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer transition-colors"
           >
-            <span>Read Architecture</span>
+            <span>Architecture</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </button>
 
@@ -138,7 +139,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onOpenDetails
               href={project.demoUrl === '#' ? '#home' : project.demoUrl}
               target={project.demoUrl === '#' ? '_self' : '_blank'}
               rel="noopener noreferrer"
-              className="p-2 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 transition-all shadow-md shadow-cyan-500/20"
+              className="p-2 rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 hover:from-cyan-300 hover:to-indigo-400 text-slate-950 transition-all shadow-md shadow-cyan-500/20"
               title="Live Demo"
               aria-label={`View Live Demo of ${project.title}`}
             >

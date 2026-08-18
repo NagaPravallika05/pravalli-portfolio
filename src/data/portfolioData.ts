@@ -229,7 +229,7 @@ jobs:
   },
   {
     name: "Figma",
-    category: "Tools",
+    category: "Design",
     description: "Design-to-code translation, auto-layout inspection, color token extraction & responsive design specs",
     badge: "Design",
     level: "Proficient",
